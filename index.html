@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ridgeline — Online Courses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#5624D0; --purple-dark:#3B1A91; --ink:#1C1D1F; --gray:#6A6F73; --line:#E3E3E3;
+  --bg:#FFFFFF; --bg-alt:#F7F9FA; --yellow:#E59819; --green:#1E7A34; --red:#E8494A;
+  --font:'Source Sans 3', system-ui, sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px);}
+body{height:100%; margin:0; background:var(--bg); color:var(--ink); font-family:var(--font);}
+h1,h2,h3{margin:0; font-weight:800;}
+p{margin:0;}
+a{color:inherit; text-decoration:none;}
+button{font-family:var(--font); cursor:pointer;}
+.wrap{max-width:1250px; margin:0 auto; padding:0 32px;}
+
+/* Header */
+header.top{background:var(--ink); color:#fff; position:sticky; top:0; z-index:20; padding-top:env(safe-area-inset-top,0px);}
+.top-inner{display:flex; align-items:center; gap:22px; padding:12px 32px; max-width:1250px; margin:0 auto;}
+.logo{font-weight:900; font-size:1.3rem; letter-spacing:-0.5px; flex-shrink:0; cursor:pointer; background:none; border:none; color:#fff;}
+.searchbar{flex:1; display:flex; max-width:640px;}
+.searchbar input{flex:1; border:none; border-radius:24px 0 0 24px; padding:10px 16px; font-family:var(--font); font-size:.92rem; outline:none;}
+.searchbar button{border:none; background:#fff; border-radius:0 24px 24px 0; padding:0 16px; color:var(--ink); font-weight:700;}
+.top-links{display:flex; align-items:center; gap:16px; margin-left:auto; flex-shrink:0;}
+.top-links button{background:none; border:none; color:#fff; font-size:.88rem; font-weight:600;}
+.top-links button.filled{background:#fff; color:var(--ink); padding:8px 16px; border-radius:4px;}
+.cat-strip{display:flex; gap:22px; padding:10px 32px; max-width:1250px; margin:0 auto; overflow-x:auto; border-top:1px solid #333;}
+.cat-strip button{background:none; border:none; color:#D6D6D6; font-size:.82rem; white-space:nowrap;}
+.cat-strip button.active{color:#fff; font-weight:700; border-bottom:2px solid var(--purple); padding-bottom:8px;}
+
+.main{padding-bottom:70px;}
+
+/* Hero */
+.hero{background:linear-gradient(120deg,#2D1B69 0%,#3B1A91 55%,#5624D0 100%); color:#fff; padding:46px 0 40px;}
+.hero .wrap{display:flex; flex-direction:column; gap:10px; max-width:560px;}
+.hero h1{font-size:2.1rem; line-height:1.15;}
+.hero p{color:#E4DCFB; font-size:1rem; line-height:1.5;}
+.hero .pill{background:#fff; color:var(--purple-dark); font-weight:700; font-size:.82rem; padding:9px 18px; border-radius:4px; border:none; width:max-content; margin-top:6px;}
+
+/* Section headers */
+.section{padding:34px 0 6px;}
+.section h2{font-size:1.35rem; margin-bottom:16px;}
+
+/* Course cards */
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:22px;}
+.card{border:1px solid var(--line); border-radius:6px; overflow:hidden; cursor:pointer; background:#fff; display:flex; flex-direction:column; transition:box-shadow .15s;}
+.card:hover{box-shadow:0 3px 14px rgba(0,0,0,0.14);}
+.thumb{height:120px; display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font); font-weight:800; font-size:.95rem; text-align:center; padding:10px; line-height:1.3;}
+.card-body{padding:12px 14px 16px; display:flex; flex-direction:column; gap:5px; flex:1;}
+.card-title{font-size:.95rem; font-weight:700; line-height:1.3; min-height:2.5em;}
+.card-inst{color:var(--gray); font-size:.8rem;}
+.rating-row{display:flex; align-items:center; gap:5px; font-size:.82rem;}
+.rating-num{color:var(--yellow); font-weight:700;}
+.stars{color:var(--yellow); letter-spacing:1px; font-size:.78rem;}
+.rating-count{color:var(--gray); font-size:.78rem;}
+.price-row{display:flex; align-items:center; gap:8px; margin-top:2px;}
+.price{font-weight:800; font-size:1rem;}
+.price-old{color:var(--gray); text-decoration:line-through; font-size:.85rem;}
+.badge{position:absolute; margin-top:-138px; background:#3D1474; color:#F0E7FF; font-size:.68rem; font-weight:700; padding:3px 8px; letter-spacing:.3px;}
+.card-wrap{position:relative;}
+.level-tag{font-size:.72rem; color:var(--gray); text-transform:none;}
+
+/* Course detail */
+.detail-hero{background:#1C1D1F; color:#fff; padding:26px 0 34px;}
+.crumb{color:#C5C0DB; font-size:.8rem; margin-bottom:14px;}
+.detail-grid{display:flex; gap:40px; align-items:flex-start;}
+.detail-main{flex:1; min-width:0; max-width:660px;}
+.detail-main h1{font-size:1.7rem; line-height:1.2; margin-bottom:10px;}
+.detail-sub{color:#E4E1F0; font-size:1.02rem; line-height:1.5; margin-bottom:14px;}
+.detail-meta{display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:.85rem; margin-bottom:6px;}
+.detail-meta .rating-num{color:var(--yellow);}
+.detail-meta a.inst{color:#8FC1FF;}
+.updated{color:#C5C0DB; font-size:.82rem;}
+
+.buy-card{width:340px; flex-shrink:0; background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:6px; box-shadow:0 4px 22px rgba(0,0,0,.25); overflow:hidden; position:sticky; top:130px;}
+.buy-thumb{height:150px;}
+.buy-body{padding:18px 20px 22px;}
+.buy-price{font-size:1.7rem; font-weight:800; display:flex; align-items:baseline; gap:10px;}
+.buy-price .old{font-size:1rem; color:var(--gray); text-decoration:line-through; font-weight:400;}
+.buy-btn{width:100%; background:var(--purple); color:#fff; border:none; padding:13px; border-radius:5px; font-weight:700; font-size:.95rem; margin-top:14px;}
+.buy-btn:hover{background:var(--purple-dark);}
+.buy-btn.secondary{background:#fff; color:var(--purple); border:1.5px solid var(--purple); margin-top:8px;}
+.includes{margin-top:18px; font-size:.85rem; line-height:2;}
+.includes b{display:block; margin-bottom:6px; font-size:.85rem;}
+
+.content-wrap{max-width:660px;}
+.learn-box{border:1px solid var(--line); border-radius:6px; padding:22px; margin:26px 0;}
+.learn-box h3{font-size:1.15rem; margin-bottom:14px;}
+.learn-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 20px;}
+.learn-item{display:flex; gap:10px; font-size:.88rem; line-height:1.5;}
+.learn-item .chk{color:var(--purple); flex-shrink:0;}
+
+.curriculum h2{font-size:1.3rem; margin:30px 0 4px;}
+.curric-meta{color:var(--gray); font-size:.85rem; margin-bottom:14px;}
+.module{border:1px solid var(--line); border-top:none;}
+.module:first-of-type{border-top:1px solid var(--line);}
+.module-head{display:flex; align-items:center; gap:12px; padding:15px 18px; cursor:pointer; background:var(--bg-alt);}
+.module-num{font-weight:700; font-size:.9rem; color:var(--ink); flex-shrink:0;}
+.module-title{flex:1; font-weight:700; font-size:.92rem;}
+.module-meta{color:var(--gray); font-size:.8rem; flex-shrink:0;}
+.chev{color:var(--gray); transition:transform .15s; flex-shrink:0;}
+.module.open .chev{transform:rotate(90deg);}
+.module-body{display:none;}
+.module.open .module-body{display:block;}
+.lesson{display:flex; align-items:center; gap:12px; padding:11px 18px; border-top:1px solid var(--line); font-size:.87rem;}
+.lesson-icon{color:var(--gray); flex-shrink:0; font-size:.85rem; width:16px;}
+.lesson-name{flex:1;}
+.lesson-len{color:var(--gray); font-size:.8rem; flex-shrink:0;}
+.lesson button.play{background:none; border:none; color:var(--purple); font-weight:700; font-size:.8rem; padding:0;}
+
+/* Lesson/player view */
+.lesson-page{background:#1C1D1F; min-height:100%;}
+.lesson-top{padding:14px 32px; display:flex; align-items:center; gap:16px; color:#fff; border-bottom:1px solid #333;}
+.lesson-top .back{background:none; border:none; color:#fff; font-size:.85rem;}
+.lesson-top .ctitle{font-weight:700; font-size:.92rem;}
+.player-wrap{background:#000; aspect-ratio:16/9; max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:center; position:relative;}
+.player-wrap .center{display:flex; flex-direction:column; align-items:center; gap:12px; color:#8a8a8a;}
+.playbtn{width:66px; height:66px; border-radius:50%; background:rgba(255,255,255,0.08); border:1.5px solid #fff; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.4rem;}
+.lesson-info{max-width:900px; margin:0 auto; padding:26px 20px 60px; color:#fff;}
+.lesson-info h2{font-size:1.25rem; margin-bottom:8px;}
+.lesson-info p.desc{color:#C9C9C9; line-height:1.6; margin-bottom:14px; font-size:.92rem;}
+.yt-card{display:flex; align-items:center; gap:14px; background:#26272B; border:1px solid #38393D; border-radius:10px; padding:14px 16px; margin-bottom:18px;}
+.yt-badge{width:44px; height:44px; border-radius:9px; background:#FF0000; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; font-size:1.15rem;}
+.yt-info{flex:1; min-width:0;}
+.yt-info .lbl{color:#9a9a9a; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;}
+.yt-info .ttl{font-size:.92rem; font-weight:700; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.yt-info .src{color:#9a9a9a; font-size:.78rem; margin-top:2px;}
+.yt-watch{background:#fff; color:#1C1D1F; border:none; padding:9px 16px; border-radius:6px; font-weight:700; font-size:.82rem; flex-shrink:0; white-space:nowrap;}
+.yt-watch:hover{background:#e6e6e6;}
+.mark-btn{background:var(--purple); color:#fff; border:none; padding:11px 20px; border-radius:5px; font-weight:700; font-size:.88rem;}
+.mark-btn.done{background:#2E2F31; color:#7CD68C; border:1px solid #7CD68C;}
+
+.assign-box{background:#26272B; border:1px solid #38393D; border-radius:8px; padding:22px; margin-bottom:20px;}
+.assign-box h3{color:#fff; font-size:1.02rem; margin-bottom:10px;}
+.assign-box p{color:#C9C9C9; line-height:1.6; font-size:.88rem;}
+.assign-box textarea{width:100%; margin-top:14px; background:#1C1D1F; border:1px solid #38393D; border-radius:6px; color:#fff; padding:12px; font-family:var(--font); font-size:.88rem; min-height:90px; resize:vertical;}
+.assign-box .submit{margin-top:12px; background:#fff; color:var(--ink); border:none; padding:9px 18px; border-radius:5px; font-weight:700; font-size:.85rem;}
+.assign-note{color:#7CD68C; font-size:.82rem; margin-top:10px; display:none;}
+
+/* My learning */
+.mylearn-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px;}
+.mlc{border:1px solid var(--line); border-radius:6px; overflow:hidden; cursor:pointer; display:flex; gap:0;}
+.mlc .thumb{width:150px; height:auto; flex-shrink:0;}
+.mlc-body{padding:14px 16px; flex:1;}
+.mlc-body h3{font-size:.92rem; margin-bottom:8px;}
+.progress-track{height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin:8px 0 6px;}
+.progress-fill{height:100%; background:var(--purple);}
+.progress-text{font-size:.78rem; color:var(--gray);}
+
+@media (max-width:900px){
+  .detail-grid{flex-direction:column;}
+  .buy-card{width:100%; position:static;}
+  .searchbar{display:none;}
+}
+@media (max-width:640px){
+  .wrap{padding:0 18px;}
+  .top-inner{padding:12px 18px;}
+  .cat-strip{padding:10px 18px;}
+  .learn-grid{grid-template-columns:1fr;}
+  .yt-card{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const GRADIENTS = {
+  webdev:"linear-gradient(135deg,#2D6CDF,#1C1D1F)",
+  uiux:"linear-gradient(135deg,#E8508C,#5624D0)",
+  git:"linear-gradient(135deg,#F05138,#1C1D1F)",
+  data:"linear-gradient(135deg,#1E9E6B,#0E4C3A)",
+  product:"linear-gradient(135deg,#E59819,#7A4A00)",
+  cloud:"linear-gradient(135deg,#00A3E0,#0B3D5C)"
+};
+const CATEGORIES = ["Development","Design","Tools","Data","Strategy","Infrastructure"];
+
+/* Real, publicly available YouTube lectures (freeCodeCamp.org channel) matched to each topic */
+const YT = {
+  internet: {id:"zN8YNNHcaZc", title:"How does the internet work? (Full Course)", src:"freeCodeCamp.org"},
+  htmlcss:  {id:"kMT54MPz9oE", title:"HTML and CSS Course – Create a Website for Beginners", src:"freeCodeCamp.org"},
+  js:       {id:"PkZNo7MFNFg", title:"Learn JavaScript – Full Course for Beginners", src:"freeCodeCamp.org"},
+  git:      {id:"mAFoROnOfHs", title:"Git & GitHub Crash Course for Beginners", src:"freeCodeCamp.org"},
+  uiux:     {id:"c9Wg6Cb_YlU", title:"UI / UX Design Tutorial – Wireframe, Mockup & Design in Figma", src:"freeCodeCamp.org"},
+  data:     {id:"GPVsHOlRBBI", title:"How to Analyze Data with Python, Pandas & Numpy", src:"freeCodeCamp.org"},
+  product:  {id:"poLzjLt2yqU", title:"The Business of Building Apps – Product Management Course", src:"freeCodeCamp.org"},
+  cloud:    {id:"3hLmDS179YE", title:"AWS Certified Cloud Practitioner Training – Full Course", src:"freeCodeCamp.org"}
+};
+
+const COURSES = [
+  {
+    id:"webdev", tag:"Development", title:"The Complete Full-Stack Web Development Bootcamp", level:"Beginner", bestseller:true,
+    instructor:"Maya Chen", rating:4.7, reviews:18342, students:142310, price:549, oldPrice:3199, updated:"August 2026",
+    desc:"Go from a blank file to a deployed application. Build real projects with HTML, CSS, JavaScript, and modern deployment workflows — no prior experience required.",
+    learn:["Build responsive websites with HTML & CSS","Write JavaScript that runs in the browser","Manipulate the DOM and handle events","Connect a front end to a live API","Deploy a project so the world can see it","Debug your own code with confidence"],
+    modules:[
+      {title:"Foundations of the Web", lessons:[
+        {type:"video", name:"How the web actually works", len:"12:04", yt:YT.internet},
+        {type:"video", name:"Structuring pages with HTML", len:"18:22", yt:YT.htmlcss},
+        {type:"video", name:"Styling with CSS layout systems", len:"22:10", yt:YT.htmlcss},
+        {type:"assign", name:"Build a personal profile page", len:"Assignment"}
+      ]},
+      {title:"JavaScript in the Browser", lessons:[
+        {type:"video", name:"Variables, functions, control flow", len:"20:41", yt:YT.js},
+        {type:"video", name:"The DOM and event handling", len:"17:15", yt:YT.js},
+        {type:"assign", name:"Build an interactive to-do list", len:"Assignment"}
+      ]},
+      {title:"Building a Real Project", lessons:[
+        {type:"video", name:"Planning a small application", len:"09:12", yt:YT.htmlcss},
+        {type:"video", name:"Connecting a page to an API", len:"19:05", yt:YT.js},
+        {type:"video", name:"Deploying your first site", len:"11:38", yt:YT.htmlcss},
+        {type:"assign", name:"Ship a weather lookup app", len:"Assignment"}
+      ]}
+    ]
+  },
+  {
+    id:"uiux", tag:"Design", title:"UI/UX Design Fundamentals: Research to Prototype", level:"Beginner", bestseller:true,
+    instructor:"Priya Nair", rating:4.8, reviews:9871, students:61204, price:499, oldPrice:2799, updated:"July 2026",
+    desc:"Learn how to research, wireframe, and design interfaces people actually enjoy using — from first sketch to a working, testable prototype.",
+    learn:["Run lightweight user research interviews","Wireframe at low and high fidelity","Build a simple type and color system","Prototype real interactions","Run a usability test","Iterate a design from feedback"],
+    modules:[
+      {title:"Thinking Like a Designer", lessons:[
+        {type:"video", name:"What UX design actually solves", len:"10:20", yt:YT.uiux},
+        {type:"video", name:"User research basics", len:"15:04", yt:YT.uiux},
+        {type:"assign", name:"Interview 3 users about a daily task", len:"Assignment"}
+      ]},
+      {title:"Wireframes to Prototypes", lessons:[
+        {type:"video", name:"Low-fidelity wireframing", len:"13:11", yt:YT.uiux},
+        {type:"video", name:"Typography, color and spacing systems", len:"21:30", yt:YT.uiux},
+        {type:"video", name:"Prototyping interactions", len:"16:44", yt:YT.uiux},
+        {type:"assign", name:"Design a mobile onboarding flow", len:"Assignment"}
+      ]},
+      {title:"Testing and Iterating", lessons:[
+        {type:"video", name:"Running a usability test", len:"14:02", yt:YT.uiux},
+        {type:"assign", name:"Redesign a screen from feedback", len:"Assignment"}
+      ]}
+    ]
+  },
+  {
+    id:"git", tag:"Tools", title:"Git & GitHub for Developers", level:"Beginner", bestseller:false,
+    instructor:"Tomasz Weber", rating:4.6, reviews:22190, students:198442, price:399, oldPrice:2299, updated:"June 2026",
+    desc:"Version control that actually makes sense — commits, branches, pull requests, and collaborating on real repositories without fear of losing work.",
+    learn:["Track changes with commits and logs","Create and merge branches confidently","Resolve merge conflicts","Open and review pull requests","Work with forks and issues","Collaborate on a shared repository"],
+    modules:[
+      {title:"Version Control Basics", lessons:[
+        {type:"video", name:"Why version control matters", len:"08:15", yt:YT.git},
+        {type:"video", name:"init, add, commit, log", len:"14:30", yt:YT.git},
+        {type:"assign", name:"Turn a folder into a git repo", len:"Assignment"}
+      ]},
+      {title:"Branching and Collaboration", lessons:[
+        {type:"video", name:"Branches and merging", len:"16:50", yt:YT.git},
+        {type:"video", name:"Resolving merge conflicts", len:"13:22", yt:YT.git},
+        {type:"video", name:"Pull requests on GitHub", len:"12:08", yt:YT.git},
+        {type:"assign", name:"Open a PR against a sample repo", len:"Assignment"}
+      ]},
+      {title:"Working Like a Team", lessons:[
+        {type:"video", name:"Forks, issues and code review", len:"11:40", yt:YT.git},
+        {type:"assign", name:"Review and comment on a teammate's PR", len:"Assignment"}
+      ]}
+    ]
+  },
+  {
+    id:"data", tag:"Data", title:"Data Analytics with Python: pandas & Visualization", level:"Intermediate", bestseller:true,
+    instructor:"Sofia Ramirez", rating:4.7, reviews:14032, students:87650, price:599, oldPrice:3499, updated:"September 2026",
+    desc:"Clean, analyze and visualize real datasets using pandas and matplotlib, and turn numbers into a story a stakeholder can act on.",
+    learn:["Load and clean messy real-world data","Use pandas for grouping and aggregation","Build charts with matplotlib","Choose the right visualization for the data","Summarize findings clearly","Present insights to a non-technical audience"],
+    modules:[
+      {title:"Working With Data", lessons:[
+        {type:"video", name:"Loading and cleaning datasets", len:"17:12", yt:YT.data},
+        {type:"video", name:"pandas fundamentals", len:"20:36", yt:YT.data},
+        {type:"assign", name:"Clean a messy sales dataset", len:"Assignment"}
+      ]},
+      {title:"Analysis and Visualization", lessons:[
+        {type:"video", name:"Grouping, pivoting, aggregating", len:"18:03", yt:YT.data},
+        {type:"video", name:"Charting with matplotlib", len:"15:47", yt:YT.data},
+        {type:"assign", name:"Build a 1-page metrics report", len:"Assignment"}
+      ]},
+      {title:"Telling the Story", lessons:[
+        {type:"video", name:"Choosing the right chart", len:"09:18", yt:YT.data},
+        {type:"video", name:"Presenting findings to stakeholders", len:"12:55", yt:YT.data},
+        {type:"assign", name:"Present insights from your own dataset", len:"Assignment"}
+      ]}
+    ]
+  },
+  {
+    id:"product", tag:"Strategy", title:"Product Management Essentials", level:"Beginner", bestseller:false,
+    instructor:"Daniel Okoye", rating:4.5, reviews:6204, students:41890, price:449, oldPrice:2499, updated:"May 2026",
+    desc:"How products actually get built: discovery, prioritization, writing specs, and working closely with design and engineering.",
+    learn:["Find real user problems worth solving","Prioritize a roadmap with a clear framework","Write a spec engineers can build from","Work effectively with design & engineering","Run a productive stand-up","Ship a feature end to end"],
+    modules:[
+      {title:"Discovery and Strategy", lessons:[
+        {type:"video", name:"Finding real user problems", len:"13:20", yt:YT.product},
+        {type:"video", name:"Prioritization frameworks", len:"11:05", yt:YT.product},
+        {type:"assign", name:"Write a one-page problem brief", len:"Assignment"}
+      ]},
+      {title:"Shipping Features", lessons:[
+        {type:"video", name:"Writing a clear spec", len:"14:48", yt:YT.product},
+        {type:"video", name:"Working with design and engineering", len:"12:31", yt:YT.product},
+        {type:"assign", name:"Draft a spec for a new feature", len:"Assignment"}
+      ]}
+    ]
+  },
+  {
+    id:"cloud", tag:"Infrastructure", title:"Cloud Fundamentals: Getting Started with AWS", level:"Beginner", bestseller:false,
+    instructor:"Grace Lindqvist", rating:4.6, reviews:8930, students:53210, price:479, oldPrice:2699, updated:"August 2026",
+    desc:"The core building blocks of cloud computing — compute, storage, networking — and deploying your first application to the cloud.",
+    learn:["Understand core cloud service models","Launch and access a virtual server","Store and serve files in the cloud","Deploy a static site to production","Manage environment variables & secrets","Keep a cloud project secure by default"],
+    modules:[
+      {title:"Core Concepts", lessons:[
+        {type:"video", name:"What 'the cloud' actually is", len:"10:02", yt:YT.cloud},
+        {type:"video", name:"Compute, storage and networking", len:"19:47", yt:YT.cloud},
+        {type:"assign", name:"Launch and access a virtual server", len:"Assignment"}
+      ]},
+      {title:"Deploying an Application", lessons:[
+        {type:"video", name:"Deploying a static site", len:"12:15", yt:YT.cloud},
+        {type:"video", name:"Environment variables and secrets", len:"11:29", yt:YT.cloud},
+        {type:"assign", name:"Deploy your own project to the cloud", len:"Assignment"}
+      ]}
+    ]
+  }
+];
+
+let state = {view:"catalog", courseId:null, moduleIdx:null, lessonIdx:null, cat:"All"};
+let progress = {};
+function loadProgress(){ try{ const r=localStorage.getItem("ridgeline_progress"); if(r) progress=JSON.parse(r);}catch(e){progress={};} }
+function saveProgress(){ try{ localStorage.setItem("ridgeline_progress", JSON.stringify(progress)); }catch(e){} }
+function lessonKey(cid,m,l){ return cid+":"+m+":"+l; }
+function totals(c){ let total=0,done=0; c.modules.forEach((mod,mi)=>mod.lessons.forEach((les,li)=>{ total++; if(progress[lessonKey(c.id,mi,li)]) done++; })); return {total,done}; }
+function stars(r){ const full=Math.round(r); return "★".repeat(full)+"☆".repeat(5-full); }
+function fmt(n){ return n>=1000? (n/1000).toFixed(1).replace(".0","")+"k" : n; }
+function thumbStyle(id){ return `background:${GRADIENTS[id]}`; }
+
+function header(){
+  return `
+  <header class="top">
+    <div class="top-inner">
+      <button class="logo" id="logoBtn">ridgeline</button>
+      <form class="searchbar" id="searchForm"><input type="text" placeholder="Search for anything"><button type="submit">🔍</button></form>
+      <div class="top-links">
+        <button id="myLearnBtn">My learning</button>
+        <button class="filled" id="logoBtn2">Log in</button>
+      </div>
+    </div>
+    <div class="cat-strip">
+      ${["All",...CATEGORIES].map(c=>`<button data-cat="${c}" class="${state.cat===c && state.view==='catalog' ?'active':''}">${c}</button>`).join("")}
+    </div>
+  </header>`;
+}
+
+function render(){
+  const app = document.getElementById("app");
+  if(state.view==="catalog") app.innerHTML = header()+catalogView();
+  else if(state.view==="mylearning") app.innerHTML = header()+myLearningView();
+  else if(state.view==="course") app.innerHTML = header()+courseView();
+  else if(state.view==="lesson") app.innerHTML = lessonView();
+  bind();
+}
+
+function courseCard(c, showBadge){
+  return `<div class="card-wrap">
+    ${c.bestseller && showBadge!==false ? `<div class="badge">Bestseller</div>`:""}
+    <div class="card" data-course="${c.id}">
+      <div class="thumb" style="${thumbStyle(c.id)}">${c.title.split(":")[0]}</div>
+      <div class="card-body">
+        <div class="card-title">${c.title}</div>
+        <div class="card-inst">${c.instructor}</div>
+        <div class="rating-row"><span class="rating-num">${c.rating}</span><span class="stars">${stars(c.rating)}</span><span class="rating-count">(${fmt(c.reviews)})</span></div>
+        <div class="price-row"><span class="price">₹${c.price}</span><span class="price-old">₹${c.oldPrice}</span></div>
+        <div class="level-tag">${c.level}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function catalogView(){
+  const list = state.cat==="All" ? COURSES : COURSES.filter(c=>c.tag===state.cat);
+  return `
+  <div class="hero"><div class="wrap">
+    <h1>Learn skills that move your career forward</h1>
+    <p>Hands-on courses in development, design, data and more — with video lectures, real assignments, and lifetime access.</p>
+    <button class="pill">Explore courses</button>
+  </div></div>
+  <div class="main"><div class="wrap">
+    <div class="section"><h2>${state.cat==="All"?"Featured courses":state.cat+" courses"}</h2>
+      <div class="grid">${list.map(c=>courseCard(c)).join("")}</div>
+    </div>
+  </div></div>`;
+}
+
+function myLearningView(){
+  return `<div class="main"><div class="wrap">
+    <div class="section"><h2>My learning</h2>
+      <div class="mylearn-grid">${COURSES.map(c=>{
+        const t = totals(c); const pct = t.total? Math.round(t.done/t.total*100):0;
+        return `<div class="mlc" data-course="${c.id}">
+          <div class="thumb" style="${thumbStyle(c.id)}; width:150px;">${c.title.split(":")[0]}</div>
+          <div class="mlc-body">
+            <h3>${c.title}</h3>
+            <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+            <div class="progress-text">${pct}% complete · ${t.done}/${t.total} lessons</div>
+          </div>
+        </div>`;
+      }).join("")}</div>
+    </div>
+  </div></div>`;
+}
+
+function courseView(){
+  const c = COURSES.find(x=>x.id===state.courseId);
+  const t = totals(c);
+  const totalLessons = c.modules.reduce((a,m)=>a+m.lessons.length,0);
+  return `
+  <div class="detail-hero"><div class="wrap">
+    <div class="crumb">Courses › ${c.tag} › ${c.title}</div>
+    <div class="detail-grid">
+      <div class="detail-main">
+        <h1>${c.title}</h1>
+        <p class="detail-sub">${c.desc}</p>
+        ${c.bestseller? `<div class="badge" style="position:static; margin:0 0 8px; display:inline-block;">Bestseller</div>`:""}
+        <div class="detail-meta"><span class="rating-num">${c.rating}</span><span class="stars">${stars(c.rating)}</span><span class="rating-count" style="color:#C5C0DB;">(${fmt(c.reviews)} ratings) · ${fmt(c.students)} students</span></div>
+        <div class="detail-meta">Created by <a class="inst">${c.instructor}</a></div>
+        <div class="updated">Last updated ${c.updated}</div>
+      </div>
+      <div class="buy-card">
+        <div class="thumb buy-thumb" style="${thumbStyle(c.id)}">${c.title.split(":")[0]}</div>
+        <div class="buy-body">
+          <div class="buy-price">₹${c.price}<span class="old">₹${c.oldPrice}</span></div>
+          <button class="buy-btn" id="enrollBtn">${t.done>0?"Continue course":"Enroll now"}</button>
+          <button class="buy-btn secondary" id="backCatalog2">Back to catalog</button>
+          <div class="includes">
+            <b>This course includes:</b>
+            ${totalLessons} on-demand video lectures<br>
+            ${c.modules.reduce((a,m)=>a+m.lessons.filter(l=>l.type==='assign').length,0)} hands-on assignments<br>
+            Full lifetime access<br>
+            Certificate of completion
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="main"><div class="wrap content-wrap">
+    <div class="learn-box">
+      <h3>What you'll learn</h3>
+      <div class="learn-grid">${c.learn.map(l=>`<div class="learn-item"><span class="chk">✓</span><span>${l}</span></div>`).join("")}</div>
+    </div>
+    <div class="curriculum">
+      <h2>Course content</h2>
+      <div class="curric-meta">${c.modules.length} sections · ${totalLessons} lectures · ${t.done}/${t.total} completed</div>
+      ${c.modules.map((mod,mi)=>`
+        <div class="module" data-mi="${mi}">
+          <div class="module-head">
+            <div class="module-num">${mi+1}</div>
+            <div class="module-title">${mod.title}</div>
+            <div class="module-meta">${mod.lessons.length} lectures</div>
+            <div class="chev">›</div>
+          </div>
+          <div class="module-body">
+            ${mod.lessons.map((les,li)=>{
+              const done = progress[lessonKey(c.id,mi,li)];
+              return `<div class="lesson" data-mi="${mi}" data-li="${li}">
+                <span class="lesson-icon">${les.type==='assign'?'✎':'▶'}</span>
+                <span class="lesson-name">${les.name}${done?' <span style="color:var(--green)">✓</span>':''}</span>
+                <span class="lesson-len">${les.len}</span>
+                <button class="play" data-open>${les.type==='assign'?'Open':'Preview'}</button>
+              </div>`;
+            }).join("")}
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  </div></div>`;
+}
+
+function lessonView(){
+  const c = COURSES.find(x=>x.id===state.courseId);
+  const mod = c.modules[state.moduleIdx];
+  const les = mod.lessons[state.lessonIdx];
+  const key = lessonKey(c.id, state.moduleIdx, state.lessonIdx);
+  const done = !!progress[key];
+  let body = "";
+  if(les.type==="video"){
+    const ytUrl = `https://www.youtube.com/watch?v=${les.yt.id}`;
+    body = `<div class="player-wrap"><div class="center"><div class="playbtn">▶</div><span style="font-size:.85rem;">${les.len}</span></div></div>
+      <div class="lesson-info">
+        <h2>${les.name}</h2>
+        <p class="desc">Part of "${mod.title}" in ${c.title}.</p>
+        <div class="yt-card">
+          <div class="yt-badge">▶</div>
+          <div class="yt-info">
+            <div class="lbl">Recommended video on this topic</div>
+            <div class="ttl">${les.yt.title}</div>
+            <div class="src">${les.yt.src} · YouTube</div>
+          </div>
+          <a class="yt-watch" href="${ytUrl}" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+        </div>
+        <button class="mark-btn ${done?'done':''}" id="markBtn">${done?'✓ Completed':'Mark as complete'}</button>
+      </div>`;
+  } else {
+    body = `<div class="lesson-info">
+        <h2>${les.name}</h2>
+        <p class="desc">Part of "${mod.title}" in ${c.title}.</p>
+        <div class="assign-box">
+          <h3>Assignment brief</h3>
+          <p>Complete the task below based on what you covered in this section, then submit your work for review.</p>
+          <textarea placeholder="Paste a link to your work, or write your submission notes here..."></textarea>
+          <button class="submit" id="submitBtn">Submit assignment</button>
+          <p class="assign-note" id="assignNote">Submitted — nice work. Marked as complete.</p>
+        </div>
+        <button class="mark-btn ${done?'done':''}" id="markBtn">${done?'✓ Completed':'Mark as complete'}</button>
+      </div>`;
+  }
+  return `<div class="lesson-page">
+    <div class="lesson-top"><button class="back" id="backToCourse">←</button><span class="ctitle">${c.title}</span></div>
+    ${body}
+  </div>`;
+}
+
+function bind(){
+  const app = document.getElementById("app");
+  const logo = document.getElementById("logoBtn"); if(logo) logo.addEventListener("click", ()=>{state.view="catalog"; state.cat="All"; render();});
+  const logo2 = document.getElementById("logoBtn2"); if(logo2) logo2.addEventListener("click", ()=>{state.view="catalog"; render();});
+  const myL = document.getElementById("myLearnBtn"); if(myL) myL.addEventListener("click", ()=>{state.view="mylearning"; render();});
+  const sf = document.getElementById("searchForm"); if(sf) sf.addEventListener("submit", e=>e.preventDefault());
+  app.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click", ()=>{state.cat=b.dataset.cat; state.view="catalog"; render();}));
+  app.querySelectorAll("[data-course]").forEach(el=>el.addEventListener("click", ()=>{state.courseId=el.dataset.course; state.view="course"; render();}));
+  const back2 = document.getElementById("backCatalog2"); if(back2) back2.addEventListener("click", ()=>{state.view="catalog"; render();});
+  const enroll = document.getElementById("enrollBtn"); if(enroll) enroll.addEventListener("click", ()=>{
+    state.moduleIdx=0; state.lessonIdx=0; state.view="lesson"; render();
+  });
+  app.querySelectorAll(".module-head").forEach(h=>h.addEventListener("click", ()=>h.parentElement.classList.toggle("open")));
+  app.querySelectorAll(".lesson").forEach(row=>{
+    const btn = row.querySelector("[data-open]");
+    if(btn) btn.addEventListener("click", e=>{ e.stopPropagation(); state.moduleIdx=+row.dataset.mi; state.lessonIdx=+row.dataset.li; state.view="lesson"; render(); });
+  });
+  const firstMod = app.querySelector(".module"); if(firstMod) firstMod.classList.add("open");
+  const backCourse = document.getElementById("backToCourse"); if(backCourse) backCourse.addEventListener("click", ()=>{state.view="course"; render();});
+  const markBtn = document.getElementById("markBtn"); if(markBtn) markBtn.addEventListener("click", ()=>{
+    const key = lessonKey(state.courseId, state.moduleIdx, state.lessonIdx);
+    progress[key] = !progress[key]; saveProgress(); render();
+  });
+  const submitBtn = document.getElementById("submitBtn"); if(submitBtn) submitBtn.addEventListener("click", ()=>{
+    const key = lessonKey(state.courseId, state.moduleIdx, state.lessonIdx);
+    progress[key]=true; saveProgress();
+    document.getElementById("assignNote").style.display="block";
+  });
+}
+
+loadProgress();
+render();
+</script>
+</body>
+</html>
